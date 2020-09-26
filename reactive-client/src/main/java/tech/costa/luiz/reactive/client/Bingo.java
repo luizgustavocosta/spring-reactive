@@ -10,9 +10,10 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RandomMessage {
+public class Bingo {
+
     private String id;
     private LocalDateTime dateTime;
-    private String message;
+    private Integer number;
 
 }

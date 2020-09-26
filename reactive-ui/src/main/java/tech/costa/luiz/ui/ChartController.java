@@ -7,40 +7,57 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
 import org.springframework.stereotype.Component;
-import tech.costa.luiz.reactive.client.RandomMessage;
-import tech.costa.luiz.reactive.client.WebClientMessageClient;
+import tech.costa.luiz.reactive.client.Bingo;
+import tech.costa.luiz.reactive.client.RandomNumberClient;
 
 import java.util.function.Consumer;
 
 import static javafx.collections.FXCollections.observableArrayList;
 
 @Component
-public class ChartController implements Consumer<RandomMessage> {
+public class ChartController {
 
     @FXML
-    private LineChart<String, Double> chart;
-    private final WebClientMessageClient webClientMessageClient;
-    private final ObservableList<Data<String, Double>> seriesData = observableArrayList();
+    private LineChart<String, Integer> chart;
+    private final RandomNumberClient randomNumberClient;
 
-    public ChartController(WebClientMessageClient webClientMessageClient) {
-        this.webClientMessageClient = webClientMessageClient;
+
+    public ChartController(RandomNumberClient randomNumberClient) {
+        this.randomNumberClient = randomNumberClient;
     }
 
     @FXML
     public void initialize() {
-        String name = "LuizGustavo";
-        final ObservableList<Series<String, Double>> data = observableArrayList();
-        data.add(new Series<>(name, seriesData));
+        String name = "Luiz";
+        final ObservableList<Series<String, Integer>> data = observableArrayList();
+        final BingoSubscriber bingoSubscriber = new BingoSubscriber(name);
+        randomNumberClient.randomNumbersFor(name).subscribe(bingoSubscriber);
+
+        String otherName = "Gustavo";
+        final BingoSubscriber otherBingoSubscriber = new BingoSubscriber(otherName);
+        randomNumberClient.randomNumbersFor(name).subscribe(otherBingoSubscriber);
+
+        data.add(bingoSubscriber.series);
+        data.add(otherBingoSubscriber.series);
         chart.setData(data);
-        webClientMessageClient.randomMessagesFor(name).subscribe(this);
+
     }
 
-    @Override
-    public void accept(RandomMessage randomMessage) {
-        Platform.runLater(() ->
-            seriesData.add(
-                    //new Data<>(String.valueOf(randomMessage.getDateTime().getSecond()),
-                    new Data<>(randomMessage.getId(),
-                            Double.valueOf("2"))));
-    }
+     private static class BingoSubscriber implements Consumer<Bingo> {
+
+        private final ObservableList<Data<String, Integer>> seriesData = observableArrayList();
+        private final Series<String, Integer> series;
+
+        public BingoSubscriber(String name) {
+            series = new Series<>(name, seriesData);
+        }
+
+        @Override
+        public void accept(Bingo bingo) {
+            Platform.runLater(() ->
+                    seriesData.add(
+                            new Data<>(String.valueOf(bingo.getDateTime().getSecond()),
+                                    bingo.getNumber())));
+        }
+     }
 }

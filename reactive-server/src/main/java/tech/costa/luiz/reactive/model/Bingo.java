@@ -1,16 +1,17 @@
-package tech.costa.luiz.reactive.controller;
+package tech.costa.luiz.reactive.model;
 
 import java.time.LocalDateTime;
 
-public class RandomMessage {
+public class Bingo {
+
     private String id;
     private LocalDateTime dateTime;
-    private String message;
+    private Integer number;
 
-    public RandomMessage(String id, LocalDateTime dateTime, String message) {
+    public Bingo(String id, LocalDateTime dateTime, Integer number) {
         this.id = id;
         this.dateTime = dateTime;
-        this.message = message;
+        this.number = number;
     }
 
     public String getId() {
@@ -21,7 +22,7 @@ public class RandomMessage {
         return dateTime;
     }
 
-    public String getMessage() {
-        return message;
+    public Integer getNumber() {
+        return number;
     }
 }

@@ -5,23 +5,23 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 
-class WebClientMessageClientTest {
+class WebClientRandomNumberClientTest {
 
     WebClient webClient = WebClient.builder().build();
 
     @Test
     void shouldRetrieveRandomMessagesFromTheService() {
         // Given
-        WebClientMessageClient webClientMessageClient = new WebClientMessageClient(webClient);
+        RandomNumberClient randomNumberClient = new WebClientRandomNumberClient(webClient);
 
         // When
-        final Flux<RandomMessage> randomMessagesFor = webClientMessageClient.randomMessagesFor("Luiz");
+        final Flux<Bingo> randomMessagesFor = randomNumberClient.randomNumbersFor("Luiz");
 
         // Then
         Assertions.assertNotNull(randomMessagesFor);
-        final Flux<RandomMessage> messageFlux = randomMessagesFor.take(5);
+        final Flux<Bingo> messageFlux = randomMessagesFor.take(5);
 
         Assertions.assertEquals(5, messageFlux.count().block());
-        Assertions.assertEquals("Luiz 0", messageFlux.blockFirst().getMessage());
+        Assertions.assertEquals("0", messageFlux.blockFirst().getId());
     }
 }
