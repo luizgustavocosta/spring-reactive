@@ -1,8 +1,7 @@
-package tech.costa.luiz.reactive.service;
+package tech.costa.luiz.reactive.domain.bingo;
 
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
-import tech.costa.luiz.reactive.model.Bingo;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

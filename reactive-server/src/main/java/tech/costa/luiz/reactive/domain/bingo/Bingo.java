@@ -1,4 +1,4 @@
-package tech.costa.luiz.reactive.model;
+package tech.costa.luiz.reactive.domain.bingo;
 
 import java.time.LocalDateTime;
 
