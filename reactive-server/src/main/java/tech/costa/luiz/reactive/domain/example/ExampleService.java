@@ -49,10 +49,10 @@ public class ExampleService {
     public Flux<Message> stream() {
         return Flux.interval(Duration.ofSeconds(1))
                 .map(this::createMessage)
-                .takeUntil(message -> message.getId().endsWith("10"))
-                //.log()
+                .takeUntil(message -> message.getId().endsWith("30"))
+                .log()
                 .takeWhile(message -> !message.getId().equals("5"))
-                .take(100)
+                .take(10)
                 .take(Duration.ofSeconds(60));
     }
 
@@ -86,7 +86,8 @@ public class ExampleService {
      * @return the flux
      */
     public Flux<Message> findAll() {
-        return Flux.fromIterable(messages);
+        final Flux<Message> messageFlux = Flux.fromIterable(messages);
+        return messageFlux;
     }
 
     /**
@@ -110,6 +111,8 @@ public class ExampleService {
         return Flux.fromArray(new String[]{"42", "", "84"})
                 .map(ExampleService::createOneMessage)
                 .map(ExampleService::save)
+                //.timeout(Duration.ofSeconds(2))
+                .takeLast(1)
                 .doOnError(throwable -> {})
                 .onErrorContinue((throwable, o) -> {});
     }
@@ -121,8 +124,14 @@ public class ExampleService {
      * @return the message
      */
     private static Message save(Message message) {
-        messages.add(message);
-        return message;
+        try {
+            Thread.sleep(3_000);
+            messages.add(message);
+            return message;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

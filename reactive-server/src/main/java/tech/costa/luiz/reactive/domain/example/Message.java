@@ -21,8 +21,8 @@ public class Message {
      */
     public Message(String id, LocalDateTime dateTime, String message) {
         Objects.requireNonNull(id, "Id is a required field");
-        Objects.requireNonNull(id, "Datetime is a required field");
-        Objects.requireNonNull(id, "Message is a required field");
+        Objects.requireNonNull(dateTime, "Datetime is a required field");
+        Objects.requireNonNull(message, "Message is a required field");
         this.id = id;
         this.dateTime = dateTime;
         this.message = message;
