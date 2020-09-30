@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public class ExampleService {
 
-    private final static List<Message> messages = new ArrayList<>();
+    private static final List<Message> messages = new ArrayList<>();
     private final ServiceId serviceId;
 
     /**
@@ -25,7 +25,6 @@ public class ExampleService {
         this.serviceId = serviceId;
     }
 
-
     /**
      * Init.
      */
@@ -34,7 +33,7 @@ public class ExampleService {
         int maxValue = 10;
         while (initialValue < maxValue) {
             initialValue++;
-            messages.add(Message.MessageBuilder.aMessage()
+            messages.add(Message.aBuilder()
                     .withId(serviceId.getNextStringId())
                     .withMessage("Message init " + initialValue)
                     .build());
@@ -63,7 +62,7 @@ public class ExampleService {
      * @return the message
      */
     private Message createMessage(Long sequence) {
-        final Message message = Message.MessageBuilder.aMessage()
+        final Message message = Message.aBuilder()
                 .withId(serviceId.getNextStringId())
                 .withMessage("Stream message " + sequence)
                 .build();
@@ -86,8 +85,7 @@ public class ExampleService {
      * @return the flux
      */
     public Flux<Message> findAll() {
-        final Flux<Message> messageFlux = Flux.fromIterable(messages);
-        return messageFlux;
+        return Flux.fromIterable(messages);
     }
 
     /**
@@ -111,9 +109,9 @@ public class ExampleService {
         return Flux.fromArray(new String[]{"42", "", "84"})
                 .map(ExampleService::createOneMessage)
                 .map(ExampleService::save)
-                //.timeout(Duration.ofSeconds(2))
+                .onBackpressureBuffer()
                 .takeLast(1)
-                .doOnError(throwable -> {})
+                .doOnError(Throwable::getMessage)
                 .onErrorContinue((throwable, o) -> {});
     }
 
@@ -128,10 +126,9 @@ public class ExampleService {
             Thread.sleep(3_000);
             messages.add(message);
             return message;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException exception) {
+            throw new IllegalStateException(exception.getMessage());
         }
-        return null;
     }
 
     /**
@@ -142,12 +139,12 @@ public class ExampleService {
      */
     private static Message createOneMessage(String valueAsString) {
         if (valueAsString.isEmpty()) {
-            return Message.MessageBuilder.aMessage()
+            return Message.aBuilder()
                     .withId(null)
                     .withMessage(valueAsString)
                     .build();
         } else {
-            return Message.MessageBuilder.aMessage()
+            return Message.aBuilder()
                     .withId(valueAsString)
                     .withMessage("Message from createOne "+valueAsString)
                     .build();

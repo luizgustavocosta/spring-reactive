@@ -13,11 +13,11 @@ import reactor.core.publisher.Mono;
 import javax.annotation.PostConstruct;
 
 /**
- * The type Example controller.
+ * The type Example rest controller.
  */
 @RestController
 @RequestMapping("api/example")
-public class ExampleController {
+public class ExampleRestController {
 
     private final ExampleService service;
 
@@ -26,7 +26,7 @@ public class ExampleController {
      *
      * @param service the service
      */
-    public ExampleController(ExampleService service) {
+    public ExampleRestController(ExampleService service) {
         this.service = service;
     }
 
@@ -36,17 +36,6 @@ public class ExampleController {
     @PostConstruct
     public void init() {
         service.init();
-    }
-
-    /**
-     * Add boolean.
-     *
-     * @return the boolean
-     */
-    @GetMapping(value = "add")
-    public boolean add() {
-        service.init();
-        return true;
     }
 
     /**
@@ -77,11 +66,18 @@ public class ExampleController {
      * @param id the id
      * @return the mono
      */
-    @GetMapping(value = "/stream/{id}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/stream/{id}")
     public Mono<Message> findById(@PathVariable String id) {
-        return Mono.just(service.getMessageBy(id));
+        // justOrEmpty to avoid error, since
+        // just requires an object
+        return Mono.justOrEmpty(service.getMessageBy(id));
     }
 
+    /**
+     * Raise an error flux.
+     *
+     * @return the flux
+     */
     @GetMapping(value = "/stream/error", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<Message> raiseAnError() {
         return service.tryAnError();
@@ -89,11 +85,10 @@ public class ExampleController {
 
     /**
      * Gets publisher.
-     *
+     * Other way to an object to flux
      * @return the publisher
      */
     public Publisher<Message> getPublisher() {
         return Flux.fromIterable(service.getMessages());
     }
-
 }

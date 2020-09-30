@@ -1,0 +1,19 @@
+<!--Example from https://www.w3schools.com/html/tryit.asp?filename=tryhtml5_sse-->
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Getting server updates</h1>
+<div id="exampleOfStream"></div>
+<script>
+if(typeof(EventSource) !== "undefined") {
+  var source = new EventSource("http://localhost:8080/api/example/stream");
+  source.onmessage = function(event) {
+    document.getElementById("exampleOfStream").innerHTML += event.data + "<br>";
+  };
+} else {
+  document.getElementById("result").innerHTML = "Sorry, your browser does not support server-sent events...";
+}
+</script>
+</body>
+</html>
+
