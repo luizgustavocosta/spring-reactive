@@ -13,7 +13,7 @@ Run the class ReactiveApplication.
 This class will start the server on default port 8080. If you want to change please change it on application.properties file of this project
 <b>application.properties</b>
 
-```server.port=8080`` to other value ``server.port=2020`` 
+``server.port=8080`` to other value ``server.port=2020`` 
 
 When the server starts, the 2 apis will be available.
 * 1st - /api/bingo
